@@ -3,12 +3,16 @@ import {StudentInformationComponent} from "./components/student-information/stud
 import {NgModule} from "@angular/core";
 import {LoginComponent} from "./components/user-regist/login/login.component";
 import {SignupComponent} from "./components/user-regist/signup/signup.component";
+import {OtpComponent} from "./components/otp/otp.component";
+
 
 export const routes: Routes = [
   { path: 'app-student-information', component: StudentInformationComponent },
   { path: 'app-login', component: LoginComponent },
   { path: 'app-signup', component: SignupComponent },
   { path: '**', redirectTo: 'app-login' },
+  { path: 'otp', component: OtpComponent },
+
 ];
 
 @NgModule({
