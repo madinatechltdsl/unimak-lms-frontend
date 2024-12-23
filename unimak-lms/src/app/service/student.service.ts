@@ -1,23 +1,21 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Student } from '../models/Student';
-import { Observable } from 'rxjs/internal/Observable';
-import { catchError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StudentService {
-  private host = environment.api.url;
+  private apiUrl = 'http://localhost:8080/api/students';
 
-  constructor(private http:HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  getAllStudents(): Observable<Student[] | HttpErrorResponse>{
-    return this.http.get<Student[]>(this.host+'api/students/all');
+  getAllStudents(): Observable<Student[]> {
+    return this.http.get<Student[]>(`${this.apiUrl}/all`);
   }
 
   getStudentById(id: number): Observable<Student> {
-    return this.http.get<Student>(`${this.host}/${id}`);
+    return this.http.get<Student>(`${this.apiUrl}/${id}`);
   }
 }

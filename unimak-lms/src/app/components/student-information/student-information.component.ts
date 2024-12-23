@@ -1,3 +1,6 @@
+import { Component, OnInit } from '@angular/core';
+import { StudentService } from '../../service/student.service';
+import { Student } from '../../models/Student';
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -7,7 +10,8 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, FormsModule, ],
   templateUrl: './student-information.component.html',
-  styleUrl: './student-information.component.css'
+  standalone: true,
+  styleUrls: ['./student-information.component.css']
 })
 export class StudentInformationComponent {
   isModalOpen = false;
@@ -59,7 +63,25 @@ export class StudentInformationComponent {
   closeModal(event?: any) {
     this.isModalOpen = false;
   }
+export class StudentInformationComponent implements OnInit {
+  students: Student[] = [];
 
+  constructor(private studentService: StudentService) {}
+
+  ngOnInit() {
+    this.fetchStudents();
+  }
+
+  fetchStudents() {
+    this.studentService.getAllStudents().subscribe(
+      (data: Student[]) => {
+        this.students = data;
+      },
+      (error) => {
+        console.error('Error fetching students:', error);
+      }
+    );
+  }
   nextStep() {
     if (this.currentStep < 4) {
       this.currentStep++;
