@@ -2,10 +2,258 @@
   <div class="flex justify-between items-center mb-4">
     <h2 class="text-lg font-semibold">Student Information</h2>
     <!-- Add New Student Button -->
-    <button class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+    <button class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600" (click)="openModal()">
       + Add New Student
     </button>
   </div>
+
+  <!-- Modal Container -->
+  <div *ngIf="isModalOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" (click)="closeModal($event)">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-3xl" (click)="$event.stopPropagation()">
+
+      <!-- Modal Header -->
+      <div class="flex justify-between items-center border-b pb-3">
+        <h2 class="text-lg font-bold">
+          {{
+            currentStep === 1 ? 'Basic Student Information' :
+              currentStep === 2 ? 'Academic Details' :
+                currentStep === 3 ? 'Address Details' : 'Student Emergency Contact'
+          }}
+        </h2>
+        <button class="text-red-500" (click)="closeModal()">✖</button>
+      </div>
+
+      <!-- Modal Content -->
+
+      <!-- First Modal Fields -->
+      <div *ngIf="currentStep === 1">
+        <div class="mt-6">
+          <h3 class="font-bold">Bulk Upload & Download Student Information</h3>
+          <div class="flex items-center gap-4 mt-2">
+            <input type="file" class="border rounded px-3 py-2">
+            <button class="bg-green-500 text-white px-4 py-2 rounded">Upload</button>
+            <button class="bg-blue-500 text-white px-4 py-2 rounded">Download Student Information</button>
+          </div>
+        </div>
+
+        <hr class="border-gray-300 mb-4" />
+
+        <div class="grid grid-cols-2 gap-4 mt-4">
+          <div>
+            <label class="block font-medium">Photo</label>
+            <input type="file" (change)="onFileSelected($event)" class="w-full border rounded px-3 py-2">
+            <div *ngIf="student.photo" class="mt-2">
+              <img [src]="student.photo" alt="Uploaded Photo" class="h-20 w-20 object-cover rounded-full">
+            </div>
+          </div>
+          <div>
+            <label class="block font-medium">Student ID</label>
+            <input type="text" [(ngModel)]="student.studentId" class="w-full border rounded px-3 py-2">
+          </div>
+          <div>
+            <label class="block font-medium">First Name</label>
+            <input type="text" [(ngModel)]="student.firstName" class="w-full border rounded px-3 py-2">
+          </div>
+          <div>
+            <label class="block font-medium">Last Name</label>
+            <input type="text" [(ngModel)]="student.lastName" class="w-full border rounded px-3 py-2">
+          </div>
+          <div>
+            <label class="block font-medium">Gender</label>
+            <select [(ngModel)]="student.gender" class="w-full border rounded px-3 py-2">
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-medium">Birth Date</label>
+            <input type="date" [(ngModel)]="student.birthDate" class="w-full border rounded px-3 py-2">
+          </div>
+        </div>
+
+        <div class="flex justify-end mt-4">
+          <button class="bg-blue-500 text-white px-4 py-2 rounded" (click)="nextStep()">Next</button>
+        </div>
+      </div>
+
+      <!-- Second Modal Fields -->
+      <div *ngIf="currentStep === 2">
+        <div class="grid grid-cols-2 gap-4 mt-4">
+          <div>
+            <label class="block font-medium">Department</label>
+            <select [(ngModel)]="student.department" class="w-full border rounded px-3 py-2">
+              <option value="">Select Department</option>
+              <option *ngFor="let department of departments" [value]="department">{{ department }}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-medium">Enrollment Date</label>
+            <input type="date" [(ngModel)]="student.enrollmentDate" class="w-full border rounded px-3 py-2">
+          </div>
+          <div>
+            <label class="block font-medium">Status</label>
+            <select [(ngModel)]="student.status" class="w-full border rounded px-3 py-2">
+              <option value="">Select Status</option>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-medium">Level</label>
+            <select [(ngModel)]="student.level" class="w-full border rounded px-3 py-2">
+              <option value="">Select Level</option>
+              <option value="Undergraduate">Undergraduate</option>
+              <option value="Postgraduate">Postgraduate</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-medium">Student Type</label>
+            <select [(ngModel)]="student.studentType" class="w-full border rounded px-3 py-2">
+              <option value="">Select Type</option>
+              <option value="Full-Time">Regular</option>
+              <option value="Part-Time">Distance</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex justify-between mt-4">
+          <button class="bg-gray-500 text-white px-4 py-2 rounded" (click)="previousStep()">Previous</button>
+          <button class="bg-blue-500 text-white px-4 py-2 rounded" (click)="nextStep()">Next</button>
+        </div>
+      </div>
+
+
+      <!-- Third Modal Fields -->
+      <div *ngIf="currentStep === 3">
+        <div class="grid grid-cols-3 gap-4 mt-4">
+          <!-- Current Address Section -->
+          <h3 class="col-span-3 text-lg font-bold">Current Address</h3>
+          <div>
+            <label class="block font-medium">Address Line 1</label>
+            <input type="text" [(ngModel)]="student.addressLine1" class="w-full border rounded px-3 py-2">
+          </div>
+          <div>
+            <label class="block font-medium">Address Line 2 (optional)</label>
+            <input type="text" [(ngModel)]="student.addressLine2" class="w-full border rounded px-3 py-2">
+          </div>
+          <div>
+            <label class="block font-medium">City/Town/Village</label>
+            <input type="text" [(ngModel)]="student.city" class="w-full border rounded px-3 py-2">
+          </div>
+          <div>
+            <label class="block font-medium">Country</label>
+            <select [(ngModel)]="student.country" class="w-full border rounded px-3 py-2">
+              <option value="">Select Country</option>
+              <option *ngFor="let country of countries" [value]="country">{{ country }}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-medium">Region</label>
+            <select [(ngModel)]="student.region" class="w-full border rounded px-3 py-2">
+              <option value="">Select Region</option>
+              <option *ngFor="let region of regions" [value]="region">{{ region }}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-medium">District</label>
+            <select [(ngModel)]="student.district" class="w-full border rounded px-3 py-2">
+              <option value="">Select District</option>
+              <option *ngFor="let district of districts" [value]="district">{{ district }}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Permanent Address Section -->
+        <div class="grid grid-cols-3 gap-4 mt-6">
+          <h3 class="col-span-3 text-lg font-bold">Permanent Address</h3>
+
+          <!-- Checkbox for Same as Current Address -->
+          <div class="col-span-3 flex items-center">
+            <input type="checkbox" [(ngModel)]="sameAsCurrentAddress" class="mr-2">
+            <label class="block font-medium">Permanent Address Same as Current Address</label>
+          </div>
+
+          <!-- Permanent Address Fields -->
+          <ng-container *ngIf="!sameAsCurrentAddress">
+            <div>
+              <label class="block font-medium">Permanent Address Line 1</label>
+              <input type="text" [(ngModel)]="student.permanentAddressLine1" class="w-full border rounded px-3 py-2">
+            </div>
+            <div>
+              <label class="block font-medium">Permanent Address Line 2 (optional)</label>
+              <input type="text" [(ngModel)]="student.permanentAddressLine2" class="w-full border rounded px-3 py-2">
+            </div>
+            <div>
+              <label class="block font-medium">City/Town/Village</label>
+              <input type="text" [(ngModel)]="student.permanentCity" class="w-full border rounded px-3 py-2">
+            </div>
+            <div>
+              <label class="block font-medium">Country</label>
+              <select [(ngModel)]="student.permanentCountry" class="w-full border rounded px-3 py-2">
+                <option value="">Select Country</option>
+                <option *ngFor="let country of countries" [value]="country">{{ country }}</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-medium">Region</label>
+              <select [(ngModel)]="student.permanentRegion" class="w-full border rounded px-3 py-2">
+                <option value="">Select Region</option>
+                <option *ngFor="let region of regions" [value]="region">{{ region }}</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-medium">District</label>
+              <select [(ngModel)]="student.permanentDistrict" class="w-full border rounded px-3 py-2">
+                <option value="">Select District</option>
+                <option *ngFor="let district of districts" [value]="district">{{ district }}</option>
+              </select>
+            </div>
+          </ng-container>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="flex justify-between mt-4">
+          <button class="bg-gray-500 text-white px-4 py-2 rounded" (click)="previousStep()">Previous</button>
+          <button class="bg-blue-500 text-white px-4 py-2 rounded" (click)="nextStep()">Next</button>
+        </div>
+      </div>
+
+
+
+
+      <!-- Fourth Modal Fields -->
+      <div *ngIf="currentStep === 4">
+        <div class="grid grid-cols-2 gap-4 mt-4">
+          <div>
+            <label class="block font-medium">Emergency Contact Name</label>
+            <input type="text" [(ngModel)]="student.emergencyContactName" class="w-full border rounded px-3 py-2">
+          </div>
+          <div>
+            <label class="block font-medium">Emergency Contact Number</label>
+            <input type="text" [(ngModel)]="student.emergencyContactNumber" class="w-full border rounded px-3 py-2">
+          </div>
+          <div>
+            <label class="block font-medium">Phone Number</label>
+            <input type="text" [(ngModel)]="student.phoneNumber" class="w-full border rounded px-3 py-2">
+          </div>
+          <div>
+            <label class="block font-medium">Email Address</label>
+            <input type="email" [(ngModel)]="student.email" class="w-full border rounded px-3 py-2">
+          </div>
+        </div>
+        <div class="flex justify-between mt-4">
+          <button class="bg-gray-500 text-white px-4 py-2 rounded" (click)="previousStep()">Previous</button>
+          <button class="bg-green-500 text-white px-4 py-2 rounded" (click)="saveStudent()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
   <hr class="border-gray-300 mb-4" />
   <div class="grid grid-cols-5 gap-4">
     <!-- Search Bar with Icon -->
@@ -66,4 +314,4 @@
       </select>
     </div>
   </div>
-</div>
+
