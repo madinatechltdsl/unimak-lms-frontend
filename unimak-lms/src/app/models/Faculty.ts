@@ -10,8 +10,10 @@ export class Faculty {
   created: Date = new Date();
   createdBy = User;
   student!: Student;
-departments: Department = new Department();
-programTypes: ProgramType = new ProgramType();
+// @ts-ignore
+  departments: Department = new Department();
+// @ts-ignore
+  programTypes: ProgramType = new ProgramType();
 courses: Course[] = new Array<Course>;
 
 
